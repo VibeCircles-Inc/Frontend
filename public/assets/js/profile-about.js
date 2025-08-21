@@ -309,3 +309,4 @@ class ProfileAboutPage {
 document.addEventListener('DOMContentLoaded', () => {
     new ProfileAboutPage();
 });
+

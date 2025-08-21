@@ -466,3 +466,4 @@ let profileGalleryPage;
 document.addEventListener('DOMContentLoaded', () => {
     profileGalleryPage = new ProfileGalleryPage();
 });
+

@@ -305,3 +305,4 @@ let profileFriendsPage;
 document.addEventListener('DOMContentLoaded', () => {
     profileFriendsPage = new ProfileFriendsPage();
 });
+
