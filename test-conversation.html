@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversation Component Test</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="./assets/css/bootstrap.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <link rel="stylesheet" href="./assets/css/responsive.css">
+    <link rel="stylesheet" href="./assets/css/color-scheme/color.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="./assets/images/favicon.png">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center my-4">Conversation Component Test</h1>
+                <div id="conversation-container">
+                    <!-- Conversation component will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="./assets/js/jquery-3.6.0.min.js"></script>
+    <script src="./assets/js/bootstrap.bundle.min.js"></script>
+    <script src="./assets/js/feather.min.js"></script>
+    <script src="./assets/js/lazysizes.min.js"></script>
+    <script src="./assets/js/script.js"></script>
+
+    <script>
+        // Load the conversation component
+        fetch('./components/conversation.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('conversation-container').innerHTML = html;
+                feather.replace(); // Re-render Feather icons
+            })
+            .catch(error => {
+                console.error('Error loading conversation component:', error);
+                document.getElementById('conversation-container').innerHTML = 
+                    '<div class="alert alert-danger">Error loading conversation component</div>';
+            });
+    </script>
+</body>
+</html>

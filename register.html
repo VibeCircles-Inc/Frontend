@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="VibeCircles - Register">
+    <meta name="keywords" content="vibecircles, register, signup, social media">
+    <meta name="author" content="VibeCircles">
+    <link rel="icon" href="./assets/images/favicon.png" type="image/x-icon" />
+    <title>Register - VibeCircles</title>
+
+    <!--Google font-->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Theme css -->
+    <link rel="stylesheet" type="text/css" href="./assets/css/style.css">
+    
+    <style>
+        .register-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .register-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .register-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .register-header h2 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        
+        .register-header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .register-body {
+            padding: 40px 30px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            flex: 1;
+            margin-bottom: 20px;
+        }
+        
+        .form-group.full-width {
+            flex: none;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn-register {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .btn-register:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-register:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .register-footer {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5e9;
+        }
+        
+        .register-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .register-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .error-message {
+            color: #f44336;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .password-requirements {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .requirement {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2px;
+        }
+        
+        .requirement.valid {
+            color: #4CAF50;
+        }
+        
+        .requirement.invalid {
+            color: #f44336;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="register-container">
+        <div class="register-card">
+            <div class="register-header">
+                <h2>Join VibeCircles</h2>
+                <p>Create your account and connect with friends</p>
+            </div>
+            
+            <div class="register-body">
+                <form id="registerForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" name="firstName" required>
+                            <div class="error-message" id="firstNameError"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" name="lastName" required>
+                            <div class="error-message" id="lastNameError"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required>
+                        <div class="error-message" id="usernameError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required>
+                        <div class="error-message" id="emailError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                        <div class="error-message" id="passwordError"></div>
+                        <div class="password-requirements" id="passwordRequirements">
+                            <div class="requirement" id="reqLength">
+                                <span>• At least 8 characters</span>
+                            </div>
+                            <div class="requirement" id="reqUppercase">
+                                <span>• One uppercase letter</span>
+                            </div>
+                            <div class="requirement" id="reqLowercase">
+                                <span>• One lowercase letter</span>
+                            </div>
+                            <div class="requirement" id="reqNumber">
+                                <span>• One number</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <div class="error-message" id="confirmPasswordError"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn-register" id="registerBtn">
+                        Create Account
+                    </button>
+                    
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <span>Creating your account...</span>
+                    </div>
+                </form>
+                
+                <div class="register-footer">
+                    <p>Already have an account? <a href="login.html">Sign in</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load API and Auth scripts -->
+    <script src="./assets/js/api-config.js"></script>
+    <script src="./assets/js/auth.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const registerForm = document.getElementById('registerForm');
+            const registerBtn = document.getElementById('registerBtn');
+            const loading = document.getElementById('loading');
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirmPassword');
+
+            // Check if user is already logged in
+            if (auth.isLoggedIn()) {
+                window.location.href = '/index.html';
+                return;
+            }
+
+            // Password validation
+            function validatePassword(password) {
+                const requirements = {
+                    length: password.length >= 8,
+                    uppercase: /[A-Z]/.test(password),
+                    lowercase: /[a-z]/.test(password),
+                    number: /\d/.test(password)
+                };
+
+                // Update requirement indicators
+                document.getElementById('reqLength').className = 
+                    `requirement ${requirements.length ? 'valid' : 'invalid'}`;
+                document.getElementById('reqUppercase').className = 
+                    `requirement ${requirements.uppercase ? 'valid' : 'invalid'}`;
+                document.getElementById('reqLowercase').className = 
+                    `requirement ${requirements.lowercase ? 'valid' : 'invalid'}`;
+                document.getElementById('reqNumber').className = 
+                    `requirement ${requirements.number ? 'valid' : 'invalid'}`;
+
+                return Object.values(requirements).every(req => req);
+            }
+
+            // Password input event
+            password.addEventListener('input', function() {
+                validatePassword(this.value);
+            });
+
+            // Confirm password validation
+            confirmPassword.addEventListener('input', function() {
+                const passwordValue = password.value;
+                const confirmValue = this.value;
+                
+                if (confirmValue && passwordValue !== confirmValue) {
+                    document.getElementById('confirmPasswordError').textContent = 'Passwords do not match';
+                    document.getElementById('confirmPasswordError').style.display = 'block';
+                } else {
+                    document.getElementById('confirmPasswordError').style.display = 'none';
+                }
+            });
+
+            registerForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Clear previous errors
+                const errorElements = document.querySelectorAll('.error-message');
+                errorElements.forEach(el => el.style.display = 'none');
+                
+                const firstName = document.getElementById('firstName').value.trim();
+                const lastName = document.getElementById('lastName').value.trim();
+                const username = document.getElementById('username').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const passwordValue = password.value;
+                const confirmPasswordValue = confirmPassword.value;
+                
+                // Validation
+                let hasErrors = false;
+                
+                if (!firstName) {
+                    document.getElementById('firstNameError').textContent = 'First name is required';
+                    document.getElementById('firstNameError').style.display = 'block';
+                    hasErrors = true;
+                }
+                
+                if (!lastName) {
+                    document.getElementById('lastNameError').textContent = 'Last name is required';
+                    document.getElementById('lastNameError').style.display = 'block';
+                    hasErrors = true;
+                }
+                
+                if (!username) {
+                    document.getElementById('usernameError').textContent = 'Username is required';
+                    document.getElementById('usernameError').style.display = 'block';
+                    hasErrors = true;
+                }
+                
+                if (!email) {
+                    document.getElementById('emailError').textContent = 'Email is required';
+                    document.getElementById('emailError').style.display = 'block';
+                    hasErrors = true;
+                }
+                
+                if (!validatePassword(passwordValue)) {
+                    document.getElementById('passwordError').textContent = 'Password does not meet requirements';
+                    document.getElementById('passwordError').style.display = 'block';
+                    hasErrors = true;
+                }
+                
+                if (passwordValue !== confirmPasswordValue) {
+                    document.getElementById('confirmPasswordError').textContent = 'Passwords do not match';
+                    document.getElementById('confirmPasswordError').style.display = 'block';
+                    hasErrors = true;
+                }
+                
+                if (hasErrors) return;
+                
+                // Show loading state
+                registerBtn.disabled = true;
+                loading.style.display = 'block';
+                
+                try {
+                    const userData = {
+                        username: username,
+                        email: email,
+                        password: passwordValue,
+                        full_name: `${firstName} ${lastName}`,
+                        first_name: firstName,
+                        last_name: lastName
+                    };
+                    
+                    const success = await auth.register(userData);
+                    
+                    if (success) {
+                        // Redirect to main page
+                        window.location.href = '/index.html';
+                    }
+                } catch (error) {
+                    console.error('Registration error:', error);
+                    auth.showNotification('Registration failed. Please try again.', 'error');
+                } finally {
+                    // Hide loading state
+                    registerBtn.disabled = false;
+                    loading.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
