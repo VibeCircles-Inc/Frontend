@@ -77,9 +77,9 @@ class LoginPage {
             if (response.success) {
                 // Store token
                 if (rememberMe) {
-                    localStorage.setItem('token', response.token);
+                    localStorage.setItem('token', response.session.access_token);
                 } else {
-                    sessionStorage.setItem('token', response.token);
+                    sessionStorage.setItem('token', response.session.access_token);
                 }
 
                 // Store user info

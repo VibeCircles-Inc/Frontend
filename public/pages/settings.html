@@ -2001,6 +2001,68 @@
         $('#datepicker').datepicker({
             uiLibrary: 'bootstrap4'
         });
+
+        // Handle generic clicks for buttons that don't have specific handlers
+        function handleGenericClick(element) {
+            const text = element.textContent.toLowerCase();
+            if (text.includes('purchase') || text.includes('buy')) {
+                // Show purchase coming soon message
+                showNotification('Purchase functionality coming soon!', 'info');
+            } else if (text.includes('save') || text.includes('update')) {
+                // Handle settings save
+                const form = element.closest('form');
+                if (form) {
+                    // Collect form data
+                    const formData = new FormData(form);
+                    const settings = Object.fromEntries(formData);
+                    
+                    // Call settings API
+                    api.settings.update(settings).then(response => {
+                        if (response.success) {
+                            showNotification('Settings saved successfully!', 'success');
+                        } else {
+                            showNotification('Failed to save settings', 'error');
+                        }
+                    }).catch(error => {
+                        console.error('Settings save error:', error);
+                        showNotification('Failed to save settings', 'error');
+                    });
+                }
+            } else if (text.includes('delete') || text.includes('remove')) {
+                // Handle delete/remove actions
+                if (confirm('Are you sure you want to delete this item?')) {
+                    // Handle deletion based on context
+                    const itemId = element.closest('[data-id]')?.getAttribute('data-id');
+                    if (itemId) {
+                        // Call appropriate delete API
+                        showNotification('Delete functionality coming soon!', 'info');
+                    }
+                }
+            } else if (text.includes('upload') || text.includes('change')) {
+                // Handle file upload
+                const fileInput = element.closest('.form-group').querySelector('input[type="file"]');
+                if (fileInput) {
+                    fileInput.click();
+                }
+            }
+        }
+
+        // Show notification function
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
     </script>
 
 </body>

@@ -2602,6 +2602,70 @@
             placement: 'absright',
             pickerPosition: "top",
         });
+
+        // Handle generic clicks for buttons that don't have specific handlers
+        function handleGenericClick(element) {
+            const text = element.textContent.toLowerCase();
+            if (text.includes('see all') || text.includes('view all')) {
+                // Handle view all functionality
+                const context = element.closest('.user-gallery')?.querySelector('h5')?.textContent.toLowerCase();
+                if (context?.includes('media')) {
+                    // Navigate to media gallery
+                    window.location.href = '/pages/profile-gallery.html';
+                } else if (context?.includes('photos')) {
+                    // Navigate to photos page
+                    window.location.href = '/pages/profile-gallery.html';
+                }
+            } else if (text.includes('send') || text.includes('message')) {
+                // Handle send message
+                const messageInput = document.querySelector('.message-input');
+                const message = messageInput?.value?.trim();
+                if (message) {
+                    // Get current conversation user
+                    const currentUser = document.querySelector('.chat-user.active')?.getAttribute('data-user-id');
+                    if (currentUser) {
+                        // Call send message API
+                        api.messages.send(currentUser, message).then(response => {
+                            if (response.success) {
+                                // Clear input and add message to chat
+                                messageInput.value = '';
+                                // Add message to chat UI
+                                showNotification('Message sent!', 'success');
+                            } else {
+                                showNotification('Failed to send message', 'error');
+                            }
+                        }).catch(error => {
+                            console.error('Send message error:', error);
+                            showNotification('Failed to send message', 'error');
+                        });
+                    }
+                }
+            } else if (text.includes('like') || text.includes('heart')) {
+                // Handle message like
+                const messageId = element.closest('[data-message-id]')?.getAttribute('data-message-id');
+                if (messageId) {
+                    // Call like API
+                    showNotification('Message like functionality coming soon!', 'info');
+                }
+            }
+        }
+
+        // Show notification function
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
     </script>
 
 </body>

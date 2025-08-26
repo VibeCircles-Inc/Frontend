@@ -220,6 +220,50 @@
 
     <script>
         feather.replace();
+
+        // Handle generic clicks for buttons that don't have specific handlers
+        function handleGenericClick(element) {
+            const text = element.textContent.toLowerCase();
+            if (text.includes('register') || text.includes('sign up')) {
+                // Redirect to register page
+                window.location.href = '/register.html';
+            } else if (text.includes('login') || text.includes('sign in')) {
+                // Redirect to login page
+                window.location.href = '/login.html';
+            } else if (text.includes('blog')) {
+                // Show blog coming soon message
+                showNotification('Blog coming soon!', 'info');
+            } else if (text.includes('help') || text.includes('support')) {
+                // Redirect to help page
+                window.location.href = '/pages/help-support.html';
+            } else if (text.includes('faq')) {
+                // Redirect to FAQ page
+                window.location.href = '/pages/faq.html';
+            } else if (text.includes('about')) {
+                // Redirect to about page
+                window.location.href = '/pages/about-us.html';
+            } else if (text.includes('contact')) {
+                // Redirect to contact page
+                window.location.href = '/pages/contact-us.html';
+            }
+        }
+
+        // Show notification function
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
     </script>
 
 </body>

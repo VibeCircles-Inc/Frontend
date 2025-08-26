@@ -1,7 +1,8 @@
-// VibeCircles API Client
+// VibeCircles API Client - Updated for Supabase Edge Functions
 class VibeCirclesAPI {
-    constructor(baseURL = '') {
-        this.baseURL = baseURL;
+    constructor() {
+        // Use your Supabase Edge Function URL
+        this.baseURL = 'https://mskzileunwnsdgkmdvay.supabase.co/functions/v1/index';
         this.token = localStorage.getItem('vibecircles_token');
     }
 
@@ -25,38 +26,35 @@ class VibeCirclesAPI {
         return !!this.token;
     }
 
-    // Make API request
-    async request(endpoint, options = {}) {
-        const url = `${this.baseURL}${endpoint}`;
-        
+    // Make API request to Supabase Edge Function
+    async request(endpoint, data = {}) {
         const config = {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                ...options.headers
+                ...(this.token && { 'Authorization': `Bearer ${this.token}` })
             },
-            ...options
+            body: JSON.stringify({
+                endpoint,
+                ...data
+            })
         };
 
-        // Add authorization header if token exists
-        if (this.token) {
-            config.headers.Authorization = `Bearer ${this.token}`;
-        }
-
         try {
-            const response = await fetch(url, config);
-            const data = await response.json();
+            const response = await fetch(this.baseURL, config);
+            const result = await response.json();
 
             if (!response.ok) {
                 // Handle authentication errors
                 if (response.status === 401) {
                     this.setToken(null);
-                    window.location.href = '/login';
+                    window.location.href = '/login.html';
                     return;
                 }
-                throw new Error(data.message || 'API request failed');
+                throw new Error(result.error || `HTTP ${response.status}`);
             }
 
-            return data;
+            return result;
         } catch (error) {
             console.error('API Error:', error);
             throw error;
@@ -66,22 +64,26 @@ class VibeCirclesAPI {
     // Authentication API
     auth = {
         // Register new user
-        register: async (userData) => {
-            return await this.request('/api/auth/register', {
-                method: 'POST',
-                body: JSON.stringify(userData)
+        register: async (name, email, password) => {
+            return await this.request('auth', {
+                action: 'register',
+                email,
+                password,
+                username: name,
+                fullName: name
             });
         },
 
         // Login user
-        login: async (credentials) => {
-            const response = await this.request('/api/auth/login', {
-                method: 'POST',
-                body: JSON.stringify(credentials)
+        login: async (email, password) => {
+            const response = await this.request('auth', {
+                action: 'login',
+                email,
+                password
             });
             
-            if (response.success && response.data.token) {
-                this.setToken(response.data.token);
+            if (response.success && response.session?.access_token) {
+                this.setToken(response.session.access_token);
             }
             
             return response;
@@ -89,14 +91,16 @@ class VibeCirclesAPI {
 
         // Get current user
         me: async () => {
-            return await this.request('/api/auth/me');
+            return await this.request('users', {
+                action: 'get_profile'
+            });
         },
 
         // Update profile
         updateProfile: async (profileData) => {
-            return await this.request('/api/auth/profile', {
-                method: 'PUT',
-                body: JSON.stringify(profileData)
+            return await this.request('users', {
+                action: 'update_profile',
+                ...profileData
             });
         },
 

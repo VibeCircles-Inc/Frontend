@@ -6889,6 +6889,80 @@
             placement: 'absleft',
             pickerPosition: "top left",
         });
+
+        // Handle generic clicks for buttons that don't have specific handlers
+        function handleGenericClick(element) {
+            const text = element.textContent.toLowerCase();
+            if (text.includes('purchase') || text.includes('buy')) {
+                // Show purchase coming soon message
+                showNotification('Purchase functionality coming soon!', 'info');
+            } else if (text.includes('like') || text.includes('heart')) {
+                // Handle like functionality
+                const postId = element.closest('[data-post-id]')?.getAttribute('data-post-id');
+                if (postId) {
+                    // Call like API
+                    api.posts.toggleLike(postId).then(response => {
+                        if (response.success) {
+                            // Update UI
+                            element.classList.toggle('active');
+                        }
+                    }).catch(error => {
+                        console.error('Like error:', error);
+                    });
+                }
+            } else if (text.includes('comment')) {
+                // Handle comment functionality
+                const postId = element.closest('[data-post-id]')?.getAttribute('data-post-id');
+                if (postId) {
+                    // Focus on comment input
+                    const commentInput = element.closest('.post-details').querySelector('.comment-input');
+                    if (commentInput) {
+                        commentInput.focus();
+                    }
+                }
+            } else if (text.includes('share')) {
+                // Handle share functionality
+                const postId = element.closest('[data-post-id]')?.getAttribute('data-post-id');
+                if (postId) {
+                    // Show share modal or copy link
+                    navigator.clipboard.writeText(`${window.location.origin}/post/${postId}`);
+                    showNotification('Link copied to clipboard!', 'success');
+                }
+            } else if (text.includes('follow') || text.includes('unfollow')) {
+                // Handle follow/unfollow functionality
+                const userId = element.closest('[data-user-id]')?.getAttribute('data-user-id');
+                if (userId) {
+                    // Call follow API
+                    api.users.sendFriendRequest(userId).then(response => {
+                        if (response.success) {
+                            // Update UI
+                            element.textContent = text.includes('follow') ? 'Unfollow' : 'Follow';
+                            element.classList.toggle('btn-outline-primary');
+                            element.classList.toggle('btn-primary');
+                        }
+                    }).catch(error => {
+                        console.error('Follow error:', error);
+                    });
+                }
+            }
+        }
+
+        // Show notification function
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
     </script>
 
 </body>

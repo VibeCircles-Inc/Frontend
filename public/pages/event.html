@@ -475,6 +475,67 @@
             placement: 'absleft',
             pickerPosition: "top left ",
         });
+
+        // Handle generic clicks for buttons that don't have specific handlers
+        function handleGenericClick(element) {
+            const text = element.textContent.toLowerCase();
+            if (text.includes('rsvp') || text.includes('going') || text.includes('maybe') || text.includes('not going')) {
+                // Handle RSVP functionality
+                const eventId = element.closest('[data-event-id]')?.getAttribute('data-event-id');
+                if (eventId) {
+                    let status = 'going';
+                    if (text.includes('maybe')) status = 'maybe';
+                    if (text.includes('not going')) status = 'not_going';
+                    
+                    // Call RSVP API
+                    api.events.rsvp(eventId, status).then(response => {
+                        if (response.success) {
+                            // Update UI
+                            element.classList.add('active');
+                            showNotification(`RSVP updated to ${status}!`, 'success');
+                        } else {
+                            showNotification('Failed to update RSVP', 'error');
+                        }
+                    }).catch(error => {
+                        console.error('RSVP error:', error);
+                        showNotification('Failed to update RSVP', 'error');
+                    });
+                }
+            } else if (text.includes('create') || text.includes('add event')) {
+                // Handle create event
+                window.location.href = '/pages/create-event.html';
+            } else if (text.includes('share') || text.includes('invite')) {
+                // Handle share event
+                const eventId = element.closest('[data-event-id]')?.getAttribute('data-event-id');
+                if (eventId) {
+                    navigator.clipboard.writeText(`${window.location.origin}/event/${eventId}`);
+                    showNotification('Event link copied to clipboard!', 'success');
+                }
+            } else if (text.includes('edit') || text.includes('update')) {
+                // Handle edit event
+                const eventId = element.closest('[data-event-id]')?.getAttribute('data-event-id');
+                if (eventId) {
+                    window.location.href = `/pages/edit-event.html?id=${eventId}`;
+                }
+            }
+        }
+
+        // Show notification function
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
     </script>
 
 </body>

@@ -776,6 +776,75 @@
             placement: 'absleft',
             pickerPosition: "top left",
         });
+
+        // Handle generic clicks for buttons that don't have specific handlers
+        function handleGenericClick(element) {
+            const text = element.textContent.toLowerCase();
+            if (text.includes('wish') || text.includes('birthday') || text.includes('send')) {
+                // Handle birthday wish
+                const wishInput = element.closest('form')?.querySelector('input[type="text"]');
+                const wish = wishInput?.value?.trim();
+                if (wish) {
+                    // Get user ID from context
+                    const userId = element.closest('[data-user-id]')?.getAttribute('data-user-id');
+                    if (userId) {
+                        // Send birthday wish via message
+                        api.messages.send(userId, `🎉 ${wish} 🎂`).then(response => {
+                            if (response.success) {
+                                wishInput.value = '';
+                                showNotification('Birthday wish sent!', 'success');
+                            } else {
+                                showNotification('Failed to send birthday wish', 'error');
+                            }
+                        }).catch(error => {
+                            console.error('Birthday wish error:', error);
+                            showNotification('Failed to send birthday wish', 'error');
+                        });
+                    }
+                }
+            } else if (text.includes('like') || text.includes('heart')) {
+                // Handle like functionality
+                const postId = element.closest('[data-post-id]')?.getAttribute('data-post-id');
+                if (postId) {
+                    // Call like API
+                    api.posts.toggleLike(postId).then(response => {
+                        if (response.success) {
+                            // Update UI
+                            element.classList.toggle('active');
+                        }
+                    }).catch(error => {
+                        console.error('Like error:', error);
+                    });
+                }
+            } else if (text.includes('comment')) {
+                // Handle comment functionality
+                const postId = element.closest('[data-post-id]')?.getAttribute('data-post-id');
+                if (postId) {
+                    // Focus on comment input
+                    const commentInput = element.closest('.post-details').querySelector('.comment-input');
+                    if (commentInput) {
+                        commentInput.focus();
+                    }
+                }
+            }
+        }
+
+        // Show notification function
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
     </script>
 
 </body>
