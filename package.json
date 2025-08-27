@@ -1,0 +1,13 @@
+{
+  "name": "vibecircles",
+  "version": "1.0.0",
+  "description": "VibeCircles social media platform",
+  "main": "index.html",
+  "scripts": {
+    "start": "node -e \"const express = require('express'); const app = express(); app.use(express.static('.')); app.listen(3000, () => console.log('Server running at http://localhost:3000'));\"",
+    "dev": "node -e \"const express = require('express'); const app = express(); app.use(express.static('.')); app.listen(3000, () => console.log('Server running at http://localhost:3000'));\""
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
